@@ -8,11 +8,23 @@ node_modules/
 dist/
 web-build/
 expo-env.d.ts
+android/.gradle/
+android/build/
+android/app/build/
+android/app/src/main/assets/*.bundle
+android/app/src/main/res/drawable-*/node_modules_*
+android/local.properties
+ios/build*/
+ios/*.xcresult
+ios/Pods/
+ios/.xcode.env.local
+.trae/evidence/
 
 # Native
 .kotlin/
 *.orig.*
 *.jks
+*.keystore
 *.p8
 *.p12
 *.key
@@ -33,9 +45,9 @@ yarn-error.*
 # local env files
 .env*.local
 
+# local debug-only API seed files
+.env.debug.local
+src/config/debugFlags.local.ts
+
 # typescript
 *.tsbuildinfo
-
-# generated native folders
-/ios
-/android

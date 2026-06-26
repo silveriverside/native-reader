@@ -1,20 +1,38 @@
+import { useEffect, useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import AppNavigator from '@/navigation/AppNavigator';
+import { seedDebugApiConfigIfAvailable } from '@/services/debugApiSeedService';
+import {
+  getDebugReaderSeedPageIdIfAvailable,
+  seedDebugReaderContentIfAvailable,
+} from '@/services/debugContentSeedService';
 
 export default function App() {
+  const [isSeedReady, setIsSeedReady] = useState(false);
+  const [initialReaderPageId, setInitialReaderPageId] = useState<string | null>(null);
+
+  useEffect(() => {
+    Promise.all([
+      seedDebugApiConfigIfAvailable(),
+      seedDebugReaderContentIfAvailable(),
+    ])
+      .then(() => getDebugReaderSeedPageIdIfAvailable())
+      .then(setInitialReaderPageId)
+      .catch((error) => {
+        console.warn(
+          'Debug seed failed',
+          error instanceof Error ? error.message : 'Unknown error'
+        );
+      })
+      .finally(() => setIsSeedReady(true));
+  }, []);
+
+  if (!isSeedReady) return null;
+
   return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
+    <>
+      <AppNavigator initialReaderPageId={initialReaderPageId} />
       <StatusBar style="auto" />
-    </View>
+    </>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});

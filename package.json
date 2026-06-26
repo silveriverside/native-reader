@@ -3,20 +3,55 @@
   "version": "1.0.0",
   "main": "index.ts",
   "dependencies": {
+    "@nozbe/watermelondb": "^0.28.0",
+    "@nozbe/with-observables": "^1.6.0",
+    "@react-navigation/bottom-tabs": "^7.17.1",
+    "@react-navigation/native": "^7.3.0",
+    "@react-navigation/native-stack": "^7.17.1",
+    "babel-preset-expo": "^56.0.14",
     "expo": "~56.0.8",
+    "expo-build-properties": "~56.0.16",
+    "expo-camera": "~56.0.7",
+    "expo-file-system": "~56.0.7",
+    "expo-image-manipulator": "^56.0.16",
+    "expo-image-picker": "~56.0.15",
+    "expo-sqlite": "~56.0.4",
     "expo-status-bar": "~56.0.4",
     "react": "19.2.3",
-    "react-native": "0.85.3"
+    "react-native": "0.85.3",
+    "react-native-markdown-display": "^7.0.2",
+    "react-native-math-view": "^3.9.5",
+    "react-native-safe-area-context": "~5.7.0",
+    "react-native-screens": "4.25.2",
+    "react-native-svg": "^15.15.4",
+    "zustand": "^5.0.14"
   },
   "devDependencies": {
+    "@react-native/jest-preset": "^0.85.3",
+    "@types/jest": "^30.0.0",
     "@types/react": "~19.2.2",
+    "jest": "^29.7.0",
+    "jest-expo": "^56.0.4",
     "typescript": "~6.0.3"
   },
   "scripts": {
     "start": "expo start",
-    "android": "expo start --android",
-    "ios": "expo start --ios",
-    "web": "expo start --web"
+    "android": "expo run:android",
+    "ios": "expo run:ios",
+    "web": "expo start --web",
+    "test": "jest",
+    "typecheck": "tsc --noEmit",
+    "export:ios": "expo export --platform ios",
+    "verify:ios-c3": "scripts/verify-ios-c3.sh",
+    "verify:android-c3-min": "scripts/verify-android-c3-min.sh",
+    "build:android-release": "scripts/build-android-release.sh"
+  },
+  "expo": {
+    "autolinking": {
+      "exclude": [
+        "react-native-math-view"
+      ]
+    }
   },
   "private": true
 }
