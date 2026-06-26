@@ -8,6 +8,10 @@ JAVA_HOME_VALUE="${ANDROID_RELEASE_JAVA_HOME:-/opt/homebrew/Cellar/openjdk@17/17
 APK_PATH="${ANDROID_RELEASE_APK_PATH:-android/app/build/outputs/apk/release/app-release.apk}"
 EVIDENCE_DIR="${ANDROID_RELEASE_EVIDENCE_DIR:-.trae/evidence/android_release_$(date +%Y%m%d_%H%M%S)}"
 SUMMARY_FILE="${EVIDENCE_DIR}/summary.txt"
+RELEASE_STORE_FILE="${NATIVE_READER_RELEASE_STORE_FILE:-}"
+RELEASE_STORE_PASSWORD="${NATIVE_READER_RELEASE_STORE_PASSWORD:-}"
+RELEASE_KEY_ALIAS="${NATIVE_READER_RELEASE_KEY_ALIAS:-}"
+RELEASE_KEY_PASSWORD="${NATIVE_READER_RELEASE_KEY_PASSWORD:-}"
 
 if [[ "${1:-}" == "--help" ]]; then
   cat <<'EOF'
@@ -26,7 +30,18 @@ note() {
   echo "$1" | tee -a "$SUMMARY_FILE"
 }
 
+fail() {
+  note "[build-android-release] FAILED: $1"
+  note "[build-android-release] evidence dir: ${EVIDENCE_DIR}"
+  exit 1
+}
+
 note "[build-android-release] evidence dir: ${EVIDENCE_DIR}"
+
+if [[ -z "$RELEASE_STORE_FILE" || -z "$RELEASE_STORE_PASSWORD" || -z "$RELEASE_KEY_ALIAS" || -z "$RELEASE_KEY_PASSWORD" ]]; then
+  fail "release signing is not configured. Export NATIVE_READER_RELEASE_STORE_FILE, NATIVE_READER_RELEASE_STORE_PASSWORD, NATIVE_READER_RELEASE_KEY_ALIAS, and NATIVE_READER_RELEASE_KEY_PASSWORD before running this script."
+fi
+
 note "[build-android-release] npm run typecheck"
 npm run typecheck
 
@@ -60,8 +75,7 @@ note "[build-android-release] assemble release apk"
 )
 
 if [[ ! -f "$APK_PATH" ]]; then
-  note "[build-android-release] FAILED: APK not found at ${APK_PATH}"
-  exit 1
+  fail "APK not found at ${APK_PATH}"
 fi
 
 shasum -a 256 "$APK_PATH" | tee "${EVIDENCE_DIR}/app-release.apk.sha256" >/dev/null

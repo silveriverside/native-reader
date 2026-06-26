@@ -67,6 +67,15 @@ react {
  * Set this to true in release builds to optimize the app using [R8](https://developer.android.com/topic/performance/app-optimization/enable-app-optimization).
  */
 def enableMinifyInReleaseBuilds = (findProperty('android.enableMinifyInReleaseBuilds') ?: false).toBoolean()
+def releaseStoreFileProp = findProperty('NATIVE_READER_RELEASE_STORE_FILE') ?: System.getenv('NATIVE_READER_RELEASE_STORE_FILE')
+def releaseStorePasswordProp = findProperty('NATIVE_READER_RELEASE_STORE_PASSWORD') ?: System.getenv('NATIVE_READER_RELEASE_STORE_PASSWORD')
+def releaseKeyAliasProp = findProperty('NATIVE_READER_RELEASE_KEY_ALIAS') ?: System.getenv('NATIVE_READER_RELEASE_KEY_ALIAS')
+def releaseKeyPasswordProp = findProperty('NATIVE_READER_RELEASE_KEY_PASSWORD') ?: System.getenv('NATIVE_READER_RELEASE_KEY_PASSWORD')
+def hasReleaseSigningConfig =
+    releaseStoreFileProp &&
+    releaseStorePasswordProp &&
+    releaseKeyAliasProp &&
+    releaseKeyPasswordProp
 
 /**
  * The preferred build flavor of JavaScriptCore (JSC)
@@ -104,15 +113,23 @@ android {
             keyAlias 'androiddebugkey'
             keyPassword 'android'
         }
+        release {
+            if (hasReleaseSigningConfig) {
+                storeFile file(releaseStoreFileProp)
+                storePassword releaseStorePasswordProp
+                keyAlias releaseKeyAliasProp
+                keyPassword releaseKeyPasswordProp
+            }
+        }
     }
     buildTypes {
         debug {
             signingConfig signingConfigs.debug
         }
         release {
-            // Caution! In production, you need to generate your own keystore file.
-            // see https://reactnative.dev/docs/signed-apk-android.
-            signingConfig signingConfigs.debug
+            if (hasReleaseSigningConfig) {
+                signingConfig signingConfigs.release
+            }
             def enableShrinkResources = findProperty('android.enableShrinkResourcesInReleaseBuilds') ?: 'false'
             shrinkResources enableShrinkResources.toBoolean()
             minifyEnabled enableMinifyInReleaseBuilds
@@ -129,6 +146,20 @@ android {
     }
     androidResources {
         ignoreAssetsPattern '!.svn:!.git:!.ds_store:!*.scc:!CVS:!thumbs.db:!picasa.ini:!*~'
+    }
+}
+
+gradle.taskGraph.whenReady { graph ->
+    def buildingRelease = graph.allTasks.any { task ->
+        task.name.toLowerCase().contains('release')
+    }
+
+    if (buildingRelease && !hasReleaseSigningConfig) {
+        throw new GradleException(
+            "Android release signing is not configured. Set NATIVE_READER_RELEASE_STORE_FILE, " +
+            "NATIVE_READER_RELEASE_STORE_PASSWORD, NATIVE_READER_RELEASE_KEY_ALIAS, and " +
+            "NATIVE_READER_RELEASE_KEY_PASSWORD in Gradle properties or environment variables."
+        )
     }
 }
 
