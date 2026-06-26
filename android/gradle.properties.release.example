@@ -1,0 +1,12 @@
+# Copy these lines into one of the following locations:
+# 1. ~/.gradle/gradle.properties
+# 2. android/gradle.properties
+#
+# If your keystore is stored under android/keystores/, remember that
+# android/app/build.gradle resolves relative paths from android/app/,
+# so use ../keystores/<file>.keystore instead of keystores/<file>.keystore.
+
+NATIVE_READER_RELEASE_STORE_FILE=/absolute/path/to/native-reader-release.keystore
+NATIVE_READER_RELEASE_STORE_PASSWORD=replace_with_store_password
+NATIVE_READER_RELEASE_KEY_ALIAS=replace_with_key_alias
+NATIVE_READER_RELEASE_KEY_PASSWORD=replace_with_key_password

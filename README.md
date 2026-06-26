@@ -45,6 +45,11 @@
 
 当前仓库已经禁止在未配置正式 keystore 时继续 release 构建。
 
+完整接入手册见：
+
+- [docs/android-release-signing.md](file:///Users/bytedance/Desktop/project/native_reader/docs/android-release-signing.md)
+- `android/gradle.properties.release.example`
+
 构建前请先设置以下环境变量：
 
 ```bash
@@ -59,6 +64,8 @@ export NATIVE_READER_RELEASE_KEY_PASSWORD=your_key_password
 ```bash
 npm run build:android-release
 ```
+
+如果 keystore 放在仓库内但不入库的 `android/keystores/`，请注意 `android/app/build.gradle` 会按 `android/app/` 解析相对路径，因此属性值要写成 `../keystores/your-release.keystore`。
 
 ## 当前已知限制
 
