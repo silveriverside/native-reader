@@ -516,6 +516,8 @@
 - GitHub 仓库目标：
   - 仓库名：`native-reader`
   - 可见性：公开
+  - 仓库地址：`https://github.com/silveriverside/native-reader`
+  - 首个 GitHub Release：`https://github.com/silveriverside/native-reader/releases/tag/v1.0.0`
 - 脱敏策略：
   - `.env.local`、`.env.debug.local`、`src/config/debugFlags.local.ts` 继续仅保留本地，不入库。
   - 新增忽略项覆盖 Android 内嵌 bundle、Android 构建目录、iOS build / xcresult、`.trae/evidence/`，避免把本地生成物和带环境差异的验证产物提交到 GitHub。
@@ -526,3 +528,6 @@
 - Release APK 边界：
   - 当前 Android `release` 变体仍使用 `signingConfigs.debug`，因此可以产出 release 变体 APK，但它不是面向应用商店的正式签名包。
   - 当前阶段 GitHub Release 上传的是“本地 release 变体 APK”，用于阶段性交付和分发验证；若后续要面向应用商店发布，需要用户提供正式 keystore 并切换 signing config。
+  - 当前上传资产：
+    - `native-reader-v1.0.0-android-release.apk`
+    - `native-reader-v1.0.0-android-release.apk.sha256`
